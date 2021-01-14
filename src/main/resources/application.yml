@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: A small feign integration
+    
+feign:
+  countries:
+    url: https://restcountries.eu/rest/v2

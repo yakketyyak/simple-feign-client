@@ -37,9 +37,7 @@ public class CountriesEndpoint {
 	 */
 	@GetMapping(value = "/countries", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<Countries>> getAll() {
-
-		return ResponseEntity.ok(this.countriesInterface.getAll());
-
+		return ResponseEntity.ok(this.countriesInterface.getCountries());
 	}
 
 }

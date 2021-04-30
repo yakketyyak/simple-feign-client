@@ -21,7 +21,7 @@ public class CountriesClientCallback implements CountriesInterface {
 	 * @return the all
 	 */
 	@Override
-	public List<Countries> getAll() {
+	public List<Countries> getCountries() {
 		return Collections.emptyList();
 	}
 

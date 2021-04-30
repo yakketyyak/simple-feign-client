@@ -1,10 +1,14 @@
 package com.yakketyyak.config;
 
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.ssl.SSLContexts;
@@ -14,6 +18,7 @@ import org.springframework.context.annotation.Configuration;
 import feign.Client;
 
 @Configuration
+@Slf4j
 public class FeignClientConfig {
 
 	/**
@@ -23,9 +28,8 @@ public class FeignClientConfig {
 	 * @return the client
 	 */
 	@Bean
-	public Client feignClient() {
-		Client trustSSLSockets = new Client.Default(getSSLSocketFactory(), new NoopHostnameVerifier());
-		return trustSSLSockets;
+	public Client feignClient() throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+		return new Client.Default(getSSLSocketFactory(), new NoopHostnameVerifier());
 	}
 
 	/**
@@ -33,22 +37,9 @@ public class FeignClientConfig {
 	 *
 	 * @return the SSL socket factory
 	 */
-	private SSLSocketFactory getSSLSocketFactory() {
-		try {
-			TrustStrategy acceptingTrustStrategy = new TrustStrategy() {
-
-				@Override
-				public boolean isTrusted(java.security.cert.X509Certificate[] chain, String authType)
-						throws CertificateException {
-					return true;
-				}
-			};
-
-			SSLContext sslContext = SSLContexts.custom().loadTrustMaterial(null, acceptingTrustStrategy).build();
-			return sslContext.getSocketFactory();
-		} catch (Exception exception) {
-		}
-		return null;
+	private SSLSocketFactory getSSLSocketFactory() throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+		TrustStrategy acceptingTrustStrategy = (java.security.cert.X509Certificate[] chain, String authType) -> true;
+		return SSLContexts.custom().loadTrustMaterial(null, acceptingTrustStrategy).build().getSocketFactory();
 	}
 
 }

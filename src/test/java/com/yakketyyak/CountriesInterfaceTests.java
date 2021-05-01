@@ -11,6 +11,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yakketyyak.endpoint.CountriesEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,6 +47,9 @@ class CountriesInterfaceTests {
 	@Autowired
 	private MockMvc mockMvc;
 
+	@Autowired
+	private ObjectMapper mapper;
+
 	/**
 	 * Should return values when calling service get all.
 	 *
@@ -60,9 +65,11 @@ class CountriesInterfaceTests {
 		MvcResult result = mockMvc.perform(get("/countries")).andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andReturn();
 
-		assertThat(countries).isNotEmpty();
-		assertThat(countries.get(0).getName()).isEqualTo("name");
-		assertThat(countries.get(0).getRegion()).isEqualTo("region");
+		List<Countries>  response = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<List<Countries>>(){});
+
+		assertThat(response).isNotEmpty();
+		assertThat(response.get(0).getName()).isEqualTo("name");
+		assertThat(response.get(0).getRegion()).isEqualTo("region");
 	}
 
 }
